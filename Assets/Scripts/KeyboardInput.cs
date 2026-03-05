@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 public class KeyboardInput : MonoBehaviour
 {
     public Corgi Corgi;
+    public PoopPlacer PoopPlacer;
   
     // Update is called once per frame
     void Update()
@@ -31,8 +32,10 @@ public class KeyboardInput : MonoBehaviour
             Corgi.Move(Vector2.right);
 
         }
-        // move up
-        // if pressed s
-        // move down
+        if (keyboard.spaceKey.wasPressedThisFrame)
+        {
+            PoopPlacer.Place(Corgi.GetPosition());
+
+        }
     }
 }

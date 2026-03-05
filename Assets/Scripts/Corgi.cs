@@ -15,6 +15,8 @@ public class Corgi : MonoBehaviour
         // make corgi move
         Vector2 movementAmount = GameParameters.CorgiMoveSpeed * direction * Time.deltaTime; // deltaTime accounts for refresh rate 
         spriteRenderer.transform.Translate(movementAmount.x, movementAmount.y, 0f);   // Translate will move on x and y axis
+
+        spriteRenderer.transform.position = SpriteTools.ConstrainToScreen(spriteRenderer);
     }
 
     private void FaceCorrectDirection(Vector2 direction)
@@ -27,5 +29,10 @@ public class Corgi : MonoBehaviour
         {
             spriteRenderer.flipX = true;
         }
+    }
+
+    public Vector3 GetPosition()
+    {
+        return spriteRenderer.transform.position;
     }
 }
