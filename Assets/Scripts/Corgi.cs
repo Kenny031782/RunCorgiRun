@@ -1,8 +1,15 @@
+using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Corgi : MonoBehaviour
 {
+    public Sprite DrunkSprite;
+    public Sprite SoberSprite;
+    
     private SpriteRenderer spriteRenderer; // private variables are lowercase
+    private bool isDrunk = false;
+    private Coroutine soberupCoroutine;
 
     public void Awake()
     {
@@ -10,6 +17,7 @@ public class Corgi : MonoBehaviour
     }
     public void Move(Vector2 direction)
     {
+        direction = ApplyDrunkenness(direction);
         FaceCorrectDirection(direction);
         
         // make corgi move
@@ -17,6 +25,74 @@ public class Corgi : MonoBehaviour
         spriteRenderer.transform.Translate(movementAmount.x, movementAmount.y, 0f);   // Translate will move on x and y axis
 
         spriteRenderer.transform.position = SpriteTools.ConstrainToScreen(spriteRenderer);
+    }
+
+    private Vector2 ApplyDrunkenness(Vector2 direction)
+    {
+        if (isDrunk)
+        {
+            direction.x = direction.x * -1;
+            direction.y = direction.y * -1;
+        }
+        return direction;
+    }
+
+    //public void OnCollisionEnter2D(Collision2D other)
+    
+
+    public void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.tag == "Beer")
+        {
+            GetDrunk();
+            Destroy(other.gameObject);
+        }
+        else if (other.tag == "Bone")
+        {
+            print("bone things");
+        }
+        else if (other.tag == "Pill")
+        {
+            print("pill things");
+        }
+    }
+
+    private void GetDrunk()
+    {
+        isDrunk = true;
+        ChangeToDrunkSprite();
+        StartSoberingUp();
+        
+    }
+
+    private void StartSoberingUp()
+    {
+        if (soberupCoroutine != null)
+            StopCoroutine(soberupCoroutine);
+            
+        soberupCoroutine = StartCoroutine(CountdownUntilSober());
+    }
+
+    IEnumerator CountdownUntilSober()
+    {
+        yield return new WaitForSeconds(GameParameters.CorgiDrunkSeconds);
+        SoberUp();
+    }
+
+    private void SoberUp()
+    {
+        ChangeToSoberSprite();
+        isDrunk = false;
+    }
+
+    private void ChangeToSoberSprite()
+    {
+        spriteRenderer.sprite = SoberSprite;
+    }
+
+    private void ChangeToDrunkSprite()
+    {
+        spriteRenderer.sprite = DrunkSprite;
     }
 
     private void FaceCorrectDirection(Vector2 direction)
