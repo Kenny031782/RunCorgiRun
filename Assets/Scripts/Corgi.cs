@@ -1,6 +1,7 @@
 using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class Corgi : MonoBehaviour
 {
@@ -9,12 +10,42 @@ public class Corgi : MonoBehaviour
     
     private SpriteRenderer spriteRenderer; // private variables are lowercase
     private bool isDrunk = false;
+    private bool isPlastered = false;
     private Coroutine soberupCoroutine;
 
     public void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
+
+    public void Update()
+    {
+        if (isPlastered)
+        {
+            MoveRandomly();
+        }
+    }
+
+    private void MoveRandomly()
+    {
+        int direction = Random.Range(0, 4);
+        switch (direction)
+        {
+            case 0:
+                Move(new Vector2(1, 0)); //right
+                break;
+            case 1:
+                Move(new Vector2(-1, 0)); //left
+                break;
+            case 2:
+                Move(new Vector2(0, 1)); //up
+                break;
+            case 3:
+                Move(new Vector2(0, -1)); //down
+                break;
+        }
+    }
+
     public void Move(Vector2 direction)
     {
         direction = ApplyDrunkenness(direction);
@@ -57,6 +88,23 @@ public class Corgi : MonoBehaviour
         }
     }
 
+    public void OnCollisionEnter2D(Collision2D other)   //moonshine doesnt have a trigger 
+    {
+        if (other.collider.tag == "Moonshine")
+        {
+            Destroy(other.gameObject);
+            GetPlastered();
+        }
+    }
+
+    private void GetPlastered()
+    {
+        isPlastered = true;
+        ChangeToDrunkSprite();
+        StartSoberingUp();
+        
+    }
+
     private void GetDrunk()
     {
         isDrunk = true;
@@ -83,6 +131,7 @@ public class Corgi : MonoBehaviour
     {
         ChangeToSoberSprite();
         isDrunk = false;
+        isPlastered = false;
     }
 
     private void ChangeToSoberSprite()

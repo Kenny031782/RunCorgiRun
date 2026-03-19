@@ -27,7 +27,7 @@ public class TimedObjectPlacer : MonoBehaviour
         isOkToCreate = true;
     }
 
-    private void Place()
+    public virtual void Place()    // virtuals says its ok to have 2 place methods
     {
         Instantiate(Prefab, SpawnTools.RandomLocationWorldSpace(), Quaternion.identity);
     }
